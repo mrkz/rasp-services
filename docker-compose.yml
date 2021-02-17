@@ -39,3 +39,14 @@ services:
     extra_hosts:
       - "${DOMAIN_LOCAL}:${HOST_IP}"
     restart: unless-stopped
+
+  mastobot:
+    env_file: .env
+    container_name: mastobot
+    # dockerfile from github.com/mrkz/dockerfiles
+    build: ../dockerfiles/mas2tter
+    volumes:
+    # the config.example.json can be taken from
+    # github.com/bitkeks/mastodon-to-twitter
+        - "${MSTDN_CNF}:/usr/src/app/config.json"
+    restart: unless-stopped
