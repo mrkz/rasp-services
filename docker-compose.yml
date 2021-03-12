@@ -50,3 +50,27 @@ services:
     # github.com/bitkeks/mastodon-to-twitter
         - "${MSTDN_CNF}:/usr/src/app/config.json"
     restart: unless-stopped
+
+  nextcloud_db:
+      env_file: .env
+      hostname: nextcloud_db
+      container_name: nextcloud_db
+      image: yobasystems/alpine-mariadb
+      restart: always
+      command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+      volumes:
+          - "${NC_DB_PATH}:/var/lib/mysql"
+
+  nextcloud:
+      env_file: .env
+      container_name: nextcloud
+      image: nextcloud:21.0.0
+      restart: unless-stopped
+      ports:
+          - "${NC_HTTP_PORT}:80"
+      links:
+          - nextcloud_db
+      volumes:
+          - "${NC_DATA_DIR}:/var/www/html"
+      depends_on:
+          - nextcloud_db
