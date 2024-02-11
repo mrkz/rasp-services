@@ -48,3 +48,16 @@ services:
           - "${NC_DATA_DIR}:/var/www/html"
       depends_on:
           - nextcloud_db
+
+  home-assistant:
+      privileged: true
+      env_file: .env
+      container_name: homeassistant
+      image: "ghcr.io/home-assistant/home-assistant:stable"
+      restart: unless-stopped
+      volumes:
+          - "${HA_CONFIG}:/config"
+          - "/etc/localtime:/etc/localtime:ro"
+          - "/run/dbus:/run/dbus:ro"
+      ports:
+          - "${HA_PORT}:8123"
