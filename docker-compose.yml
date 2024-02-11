@@ -91,3 +91,13 @@ services:
           - "${ZB2MQTT_PORT}:8080"
       depends_on:
           - mosquitto
+
+  esphome:
+      privileged: true
+      container_name: esphome
+      image: ghcr.io/esphome/esphome
+      volumes:
+        - "${ESPHOME_CONFIG}:/config"
+        - /etc/localtime:/etc/localtime:ro
+      restart: always
+      network_mode: host
