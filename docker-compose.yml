@@ -61,3 +61,33 @@ services:
           - "/run/dbus:/run/dbus:ro"
       ports:
           - "${HA_PORT}:8123"
+
+  mosquitto:
+      env_file: .env
+      container_name: mosquitto
+      image: "eclipse-mosquitto"
+      restart: unless-stopped
+      volumes:
+          - "${MOSQUITTO_CONFIG}:/mosquitto/config"
+          - "${MOSQUITTO_DATA}:/mosquitto/data"
+          - "${MOSQUITTO_LOG}:/mosquitto/log"
+      ports:
+          - "${MOSQUITTO_PORT}:1883"
+          - "${MOSQUITTO_WEBHOOK_PORT}:9001"
+
+  zigbee2mqtt:
+      env_file: .env
+      container_name: zigbee2mqtt
+      image: "koenkk/zigbee2mqtt"
+      restart: always
+      volumes:
+          - "${ZB2MQTT_DATA}:/app/data"
+          - "/run/udev:/run/udev:ro"
+          - "/etc/localtime:/etc/localtime:ro"
+      devices:
+          - "/dev/ttyUSB0:/dev/ttyUSB0"
+      privileged: true
+      ports:
+          - "${ZB2MQTT_PORT}:8080"
+      depends_on:
+          - mosquitto
