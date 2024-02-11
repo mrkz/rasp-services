@@ -24,22 +24,6 @@ services:
       - 1.1.1.1
     restart: unless-stopped
 
-
-  murmur:
-    env_file: .env
-    hostname: murmur
-    container_name: mumble-server
-    image: zalkeen/murmur:armhf
-    ports:
-        - "${MR_SERVER_PORT}:64738/tcp"
-        - "${MR_SERVER_PORT}:64738/udp"
-    volumes:
-        - "${MR_SERVER_DATA}:/data"
-        - "${MR_SERVER_CONF}:/etc/murmur.ini"
-    extra_hosts:
-      - "${DOMAIN_LOCAL}:${HOST_IP}"
-    restart: unless-stopped
-
   mastobot:
     env_file: .env
     container_name: mastobot
