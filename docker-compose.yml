@@ -28,7 +28,7 @@ services:
       env_file: .env
       hostname: nextcloud_db
       container_name: nextcloud_db
-      image: yobasystems/alpine-mariadb
+      image: yobasystems/alpine-mariadb:latest
       restart: always
       command: --transaction-isolation=READ-COMMITTED --log-bin=nextcloud_db-bin --binlog-format=ROW
       volumes:
