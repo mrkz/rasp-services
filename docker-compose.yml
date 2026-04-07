@@ -101,3 +101,10 @@ services:
         - /etc/localtime:/etc/localtime:ro
       restart: always
       network_mode: host
+
+  portainer:
+      image: portainer/portainer-ce:latest
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+      restart: unless-stopped
+      network_mode: host
