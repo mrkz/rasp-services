@@ -1,0 +1,20 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=ESPHome dashboard
+After=network-online.target
+Wants=network-online.target
+PartOf=homelab.target
+
+[Container]
+Image={{ esphome_image }}
+ContainerName=esphome
+# host network required for ESP device mDNS discovery and OTA flashing.
+Network=host
+Volume={{ homelab_data_root }}/esphome:/config:Z
+Volume=/etc/localtime:/etc/localtime:ro
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=homelab.target

@@ -1,0 +1,50 @@
+---
+# Copy this file to host_vars/<hostname>.yml and fill in all values.
+# The filename must exactly match the hostname defined in inventory/hosts.yml.
+# chmod 600 host_vars/<hostname>.yml after editing.
+# This file is committed. The real file is gitignored.
+
+# ------------------------------------------------------------
+# Host connection -- required by Ansible
+# ------------------------------------------------------------
+ansible_host: 192.168.1.x
+
+# ------------------------------------------------------------
+# Host identity -- used across multiple service templates
+# ------------------------------------------------------------
+host_ip: 192.168.1.x
+domain_local: homelab.local
+
+# ------------------------------------------------------------
+# Pi-hole
+# ------------------------------------------------------------
+ph_dns_host_port: 53
+ph_http_host_port: 8080
+ph_webpassword: changeme
+
+# ------------------------------------------------------------
+# Mosquitto
+# ------------------------------------------------------------
+mosquitto_port: 1883
+mosquitto_websocket_port: 9001
+
+# ------------------------------------------------------------
+# Zigbee2MQTT
+# ------------------------------------------------------------
+zb2mqtt_port: 8085
+
+# ------------------------------------------------------------
+# Nextcloud
+# ------------------------------------------------------------
+nc_http_port: 8081
+nc_mysql_root_password: changeme
+nc_mysql_database: nextcloud
+nc_mysql_user: nextcloud
+nc_mysql_password: changeme
+# Must match the IP or hostname used to reach Nextcloud in the browser.
+nc_trusted_domains: 192.168.1.x
+
+# ------------------------------------------------------------
+# Home Assistant
+# ------------------------------------------------------------
+ha_tz: Europe/Lisbon

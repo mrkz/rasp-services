@@ -1,0 +1,44 @@
+---
+- name: Create secrets directory
+  file:
+    path: "{{ secrets_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Create service data directories
+  file:
+    path: "{{ homelab_data_root }}/{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode | default('0755') }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+  loop:
+    - { path: pihole/etc-pihole }
+    - { path: pihole/etc-dnsmasq.d }
+    - { path: mosquitto/config }
+    - { path: mosquitto/data }
+    - { path: mosquitto/log }
+    - { path: zigbee2mqtt }
+    - { path: homeassistant }
+    # MariaDB and Redis drop to UID 999 internally; directories must be
+    # owned by 999 or writes will fail with permission denied.
+    - { path: nextcloud/db,    owner: "999", group: "999" }
+    - { path: nextcloud/redis, owner: "999", group: "999" }
+    - { path: nextcloud/html }
+    - { path: esphome }
+
+- name: Deploy homelab.target
+  template:
+    src: homelab.target.j2
+    dest: /etc/systemd/system/homelab.target
+    mode: "0644"
+  notify: daemon-reload
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Enable homelab.target
+  systemd:
+    name: homelab.target
+    enabled: true
+    daemon_reload: true

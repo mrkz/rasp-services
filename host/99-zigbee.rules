@@ -1,0 +1,8 @@
+# udev rule for Sonoff Zigbee 3.0 USB Dongle Plus (Silicon Labs CP210x)
+# idVendor=10c4  idProduct=ea60
+#
+# Creates a stable symlink at /dev/zigbee regardless of USB port assignment.
+# Install: copy to /etc/udev/rules.d/99-zigbee.rules, then:
+#   udevadm control --reload-rules && udevadm trigger
+#
+SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", SYMLINK+="zigbee", MODE="0660", GROUP="dialout"

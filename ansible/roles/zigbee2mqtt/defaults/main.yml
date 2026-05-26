@@ -1,0 +1,2 @@
+---
+service_image: "{{ zigbee2mqtt_image }}"

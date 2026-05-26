@@ -1,0 +1,29 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Mosquitto MQTT broker
+After=network-online.target
+Wants=network-online.target
+PartOf=homelab.target
+
+[Container]
+Image={{ mosquitto_image }}
+ContainerName=mosquitto
+Network=iot.network
+# Bind to loopback only -- Home Assistant reaches this via 127.0.0.1
+# since it runs on the host network. Zigbee2MQTT reaches it via the
+# iot network using the container name.
+PublishPort=127.0.0.1:{{ mosquitto_port }}:1883
+PublishPort=127.0.0.1:{{ mosquitto_websocket_port }}:9001
+Volume={{ homelab_data_root }}/mosquitto/config:/mosquitto/config:ro,Z
+Volume={{ homelab_data_root }}/mosquitto/data:/mosquitto/data:Z
+Volume={{ homelab_data_root }}/mosquitto/log:/mosquitto/log:Z
+HealthCmd=mosquitto_sub -t $$SYS/# -C 1 -i healthcheck -W 3
+HealthInterval=10s
+HealthRetries=5
+Notify=healthy
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=homelab.target

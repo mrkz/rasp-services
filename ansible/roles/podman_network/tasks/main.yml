@@ -1,0 +1,11 @@
+---
+- name: Deploy network Quadlet files
+  template:
+    src: network.j2
+    dest: "{{ quadlet_dir }}/{{ item.key }}.network"
+    mode: "0644"
+  loop: "{{ networks | dict2items }}"
+  notify: daemon-reload
+
+- name: Flush handlers
+  meta: flush_handlers

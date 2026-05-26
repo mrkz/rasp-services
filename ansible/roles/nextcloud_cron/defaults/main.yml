@@ -1,0 +1,2 @@
+---
+service_image: "{{ nextcloud_image }}"

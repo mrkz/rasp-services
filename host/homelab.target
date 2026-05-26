@@ -1,0 +1,12 @@
+# Static reference copy of the homelab.target unit.
+# The authoritative copy is deployed by Ansible via the common role template.
+# This file is for documentation and manual inspection only.
+#
+# Location on host: /etc/systemd/system/homelab.target
+[Unit]
+Description=Homelab container stack
+After=network-online.target
+Wants=network-online.target
+
+[Install]
+WantedBy=multi-user.target

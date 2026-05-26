@@ -1,0 +1,3 @@
+---
+# Default image -- overridable per host in host_vars
+service_image: "{{ pihole_image }}"

@@ -1,2 +1,6 @@
 *.env
 etc-*
+
+# Per-host secrets -- copy from rpi4.yml.example and fill in values
+ansible/host_vars/*.yml
+!ansible/host_vars/*.yml.example

@@ -1,0 +1,23 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Nextcloud background cron
+After=nextcloud.service
+Requires=nextcloud.service
+PartOf=homelab.target
+
+[Container]
+Image={{ nextcloud_image }}
+ContainerName=nextcloud_cron
+Network=frontend.network
+Network=nextcloud_internal.network
+# Reuses the same data volume as the main Nextcloud container.
+Volume={{ homelab_data_root }}/nextcloud/html:/var/www/html:Z
+Entrypoint=/cron.sh
+
+[Service]
+# Errors are expected until Nextcloud first-run wizard completes.
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=homelab.target

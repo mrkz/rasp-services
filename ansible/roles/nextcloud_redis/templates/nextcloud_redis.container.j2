@@ -1,0 +1,22 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Nextcloud Redis cache
+After=network-online.target
+Wants=network-online.target
+PartOf=homelab.target
+
+[Container]
+Image={{ nextcloud_redis_image }}
+ContainerName=nextcloud_redis
+Network=nextcloud_internal.network
+Volume={{ homelab_data_root }}/nextcloud/redis:/data:Z
+HealthCmd=redis-cli ping
+HealthInterval=10s
+HealthRetries=5
+Notify=healthy
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=homelab.target

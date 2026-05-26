@@ -1,0 +1,5 @@
+# Managed by Ansible -- do not edit manually
+[Network]
+NetworkName={{ item.key }}
+Subnet={{ item.value.subnet }}
+Gateway={{ item.value.gateway }}

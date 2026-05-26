@@ -1,0 +1,8 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Homelab container stack
+After=network-online.target
+Wants=network-online.target
+
+[Install]
+WantedBy=multi-user.target

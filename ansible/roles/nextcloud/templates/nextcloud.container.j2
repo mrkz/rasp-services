@@ -1,0 +1,24 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Nextcloud
+After=nextcloud_db.service
+After=nextcloud_redis.service
+Requires=nextcloud_db.service
+Requires=nextcloud_redis.service
+PartOf=homelab.target
+
+[Container]
+Image={{ nextcloud_image }}
+ContainerName=nextcloud
+Network=frontend.network
+Network=nextcloud_internal.network
+PublishPort={{ host_ip }}:{{ nc_http_port }}:80
+EnvironmentFile={{ secrets_dir }}/nextcloud.env
+Volume={{ homelab_data_root }}/nextcloud/html:/var/www/html:Z
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=180
+
+[Install]
+WantedBy=homelab.target

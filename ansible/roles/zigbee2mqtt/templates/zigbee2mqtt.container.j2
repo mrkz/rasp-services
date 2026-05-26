@@ -1,0 +1,28 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Zigbee2MQTT bridge
+After=mosquitto.service
+Requires=mosquitto.service
+PartOf=homelab.target
+
+[Container]
+Image={{ zigbee2mqtt_image }}
+ContainerName=zigbee2mqtt
+Network=iot.network
+Network=frontend.network
+# /dev/zigbee is a stable udev symlink for the Zigbee USB dongle.
+# See host/99-zigbee.rules. Adjust if using a different dongle.
+AddDevice=/dev/zigbee:/dev/ttyUSB0:rw
+# GroupAdd (not AddGroup) is the correct Quadlet key for --group-add
+GroupAdd=dialout
+Volume={{ homelab_data_root }}/zigbee2mqtt:/app/data:Z
+Volume=/run/udev:/run/udev:ro
+Volume=/etc/localtime:/etc/localtime:ro
+# UI accessible on LAN only
+PublishPort={{ host_ip }}:{{ zb2mqtt_port }}:8080
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=homelab.target

@@ -1,0 +1,28 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Home Assistant
+After=network-online.target
+After=mosquitto.service
+Wants=network-online.target
+PartOf=homelab.target
+
+[Container]
+Image={{ homeassistant_image }}
+ContainerName=homeassistant
+# host network is required for mDNS, SSDP, Bluetooth, Matter/Thread
+# device discovery. PublishPort must not be used with Network=host.
+Network=host
+# privileged is required for full hardware access (Bluetooth, USB, GPIO).
+# This is the only service in the stack that runs privileged.
+PodmanArgs=--privileged
+Volume={{ homelab_data_root }}/homeassistant:/config:Z
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/run/dbus:/run/dbus:ro
+EnvironmentFile={{ secrets_dir }}/homeassistant.env
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=180
+
+[Install]
+WantedBy=homelab.target

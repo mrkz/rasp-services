@@ -1,0 +1,5 @@
+---
+- name: daemon-reload handler
+  systemd:
+    daemon_reload: true
+  listen: daemon-reload

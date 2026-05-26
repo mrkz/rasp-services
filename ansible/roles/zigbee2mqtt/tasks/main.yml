@@ -1,0 +1,43 @@
+---
+- name: Set service image
+  set_fact:
+    service_image: "{{ zigbee2mqtt_image }}"
+
+- name: Set container platform
+  set_fact:
+    container_platform: "{{ 'linux/arm64' if ansible_architecture == 'aarch64' else 'linux/amd64' }}"
+
+- name: Deploy zigbee2mqtt Quadlet unit
+  template:
+    src: zigbee2mqtt.container.j2
+    dest: "{{ quadlet_dir }}/zigbee2mqtt.container"
+    mode: "0644"
+  notify: daemon-reload
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Get current image digest
+  command: >
+    podman image inspect {{ service_image }}
+    --format {% raw %}'{{.Digest}}'{% endraw %}
+  register: digest_before
+  changed_when: false
+  failed_when: false
+
+- name: Pull image
+  command: podman pull --platform {{ container_platform }} {{ service_image }}
+  changed_when: true
+
+- name: Get new image digest
+  command: >
+    podman image inspect {{ service_image }}
+    --format {% raw %}'{{.Digest}}'{% endraw %}
+  register: digest_after
+  changed_when: false
+
+- name: Restart if image updated
+  systemd:
+    name: zigbee2mqtt.service
+    state: restarted
+  when: digest_before.stdout != digest_after.stdout

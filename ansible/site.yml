@@ -1,0 +1,54 @@
+---
+- name: Homelab container stack
+  hosts: homelab
+  become: true
+
+  roles:
+    # common and podman_network are tagged 'always' so they run on every
+    # invocation, including partial --tags runs. This ensures data directories,
+    # homelab.target, and network Quadlet files are always present before any
+    # service role attempts to deploy a container unit.
+    - role: common
+      tags: [always]
+
+    - role: podman_network
+      tags: [always, network]
+
+    - role: pihole
+      tags: [pihole]
+
+    - role: mosquitto
+      tags: [mosquitto]
+
+    - role: zigbee2mqtt
+      tags: [zigbee2mqtt]
+
+    - role: homeassistant
+      tags: [homeassistant]
+
+    # nextcloud_db, nextcloud_redis, nextcloud, and nextcloud_cron all share
+    # the 'nextcloud' tag so --tags nextcloud runs the full stack in order.
+    - role: nextcloud_db
+      tags: [nextcloud_db, nextcloud]
+
+    - role: nextcloud_redis
+      tags: [nextcloud_redis, nextcloud]
+
+    - role: nextcloud
+      tags: [nextcloud]
+
+    - role: nextcloud_cron
+      tags: [nextcloud_cron, nextcloud]
+
+    - role: esphome
+      tags: [esphome]
+
+  post_tasks:
+    # Ensure homelab.target is started after all roles have deployed their
+    # Quadlet units and flushed daemon-reload. On first run this starts all
+    # containers. On subsequent runs it is idempotent (already running).
+    - name: Start homelab.target
+      tags: [always]
+      systemd:
+        name: homelab.target
+        state: started

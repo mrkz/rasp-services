@@ -1,0 +1,37 @@
+---
+# Shared paths -- override in host_vars if needed
+homelab_data_root: /opt/homelab/data
+quadlet_dir: /etc/containers/systemd
+secrets_dir: /etc/containers/systemd/secrets
+
+# ------------------------------------------------------------
+# Image versions
+# Bump a value here to trigger pull + restart on the next run.
+# All images are multi-arch; the correct manifest is selected
+# automatically based on the target host architecture.
+# ------------------------------------------------------------
+pihole_image: docker.io/pihole/pihole:2024.07.0
+mosquitto_image: docker.io/eclipse-mosquitto:2.0
+zigbee2mqtt_image: docker.io/koenkk/zigbee2mqtt:1.39.0
+# home-assistant:stable is the only floating tag in this stack.
+# HA does not publish semver image tags.
+homeassistant_image: ghcr.io/home-assistant/home-assistant:stable
+#nextcloud_db_image: docker.io/yobasystems/alpine-mariadb:10.11
+nextcloud_db_image: docker.io/library/mariadb:latest
+nextcloud_redis_image: docker.io/library/redis:7-alpine
+nextcloud_image: docker.io/library/nextcloud:32
+esphome_image: ghcr.io/esphome/esphome:2024.6.0
+
+# ------------------------------------------------------------
+# Podman network definitions
+# ------------------------------------------------------------
+networks:
+  frontend:
+    subnet: 172.20.0.0/24
+    gateway: 172.20.0.1
+  iot:
+    subnet: 172.21.0.0/24
+    gateway: 172.21.0.1
+  nextcloud_internal:
+    subnet: 172.22.0.0/24
+    gateway: 172.22.0.1

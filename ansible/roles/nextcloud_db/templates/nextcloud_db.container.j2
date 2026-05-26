@@ -1,0 +1,24 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Nextcloud MariaDB
+After=network-online.target
+Wants=network-online.target
+PartOf=homelab.target
+
+[Container]
+Image={{ nextcloud_db_image }}
+ContainerName=nextcloud_db
+Network=nextcloud_internal.network
+EnvironmentFile={{ secrets_dir }}/nextcloud_db.env
+Volume={{ homelab_data_root }}/nextcloud/db:/var/lib/mysql:Z
+Exec=--transaction-isolation=READ-COMMITTED --log-bin=nextcloud_db-bin --binlog-format=ROW
+HealthCmd=/usr/local/bin/healthcheck.sh --connect --innodb_initialized
+HealthInterval=10s
+HealthRetries=5
+Notify=healthy
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=homelab.target

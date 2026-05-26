@@ -1,0 +1,34 @@
+# Managed by Ansible -- do not edit manually
+[Unit]
+Description=Pi-hole DNS ad-blocker
+After=network-online.target
+Wants=network-online.target
+PartOf=homelab.target
+
+[Container]
+Image={{ pihole_image }}
+ContainerName=pihole
+HostName=pi.hole
+Network=frontend.network
+# Bind to LAN IP only -- not exposed to 0.0.0.0
+PublishPort={{ host_ip }}:{{ ph_dns_host_port }}:53/tcp
+PublishPort={{ host_ip }}:{{ ph_dns_host_port }}:53/udp
+PublishPort={{ host_ip }}:{{ ph_http_host_port }}:80/tcp
+Environment=VIRTUAL_HOST={{ host_ip }}:{{ ph_http_host_port }}
+Environment=ServerIP={{ host_ip }}
+EnvironmentFile={{ secrets_dir }}/pihole.env
+Volume={{ homelab_data_root }}/pihole/etc-pihole:/etc/pihole:Z
+Volume={{ homelab_data_root }}/pihole/etc-dnsmasq.d:/etc/dnsmasq.d:Z
+AddHost={{ domain_local }}:{{ host_ip }}
+# Use external upstream DNS for the container's own resolution.
+# Do NOT point to 127.0.0.1 here -- that loops back to pihole itself
+# before it is ready and causes startup DNS failures.
+DNS=1.1.1.1
+DNS=9.9.9.9
+
+[Service]
+Restart=on-failure
+TimeoutStartSec=120
+
+[Install]
+WantedBy=homelab.target
